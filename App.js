@@ -1,11 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import AppNavigator from './src/navigations/appNav';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Gilroy-Regular': require('./assets/fonts/gilroy/Gilroy-Regular.ttf'),
+    'Gilroy-Regular': require('./assets/fonts/gilroy/Gilroy-Medium.ttf'),
+    'Gilroy-Bold': require('./assets/fonts/gilroy/Gilroy-Bold.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <AppNavigator />
     </View>
   );
 }
